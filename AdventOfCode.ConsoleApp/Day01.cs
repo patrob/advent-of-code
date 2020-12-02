@@ -14,32 +14,10 @@ namespace AdventOfCode.ConsoleApp
                 .Split('\n')
                 .Select(line => Convert.ToInt32(line))
                 .ToArray();
-            var puzzle1 = Find2ThatSum(data, 2020).Aggregate((c, n) => c * n);
+            var puzzle1 = FindXThatSum(data, 2020, 2).Aggregate((c, n) => c * n);
             Console.WriteLine($"Answer 1: {puzzle1}");
             var puzzle2 = FindXThatSum(data, 2020, 3).Aggregate((c, n) => c * n);
             Console.WriteLine($"Answer 2: {puzzle2}");
-        }
-
-        public int Run(int[] input)
-        {
-            var expenses = Find2ThatSum(input, 2020);
-            return expenses[0] * expenses[1];
-        }
-
-        public int[] Find2ThatSum(int[] input, int sum)
-        {
-            for(var i = 0; i < input.Length; i++)
-            {
-                var num1 = input[i];
-                for(var j = 1; j < input.Length; j++)
-                {
-                    if (i == j) continue;
-                    var num2 = input[j];
-
-                    if (num1 + num2 == sum) return new int[] {num1, num2};
-                }
-            }
-            return null;
         }
 
         public int[] FindXThatSum(int[] input, int sum, int count)
