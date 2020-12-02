@@ -44,6 +44,48 @@ namespace AdventOfCode.Tests
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
+        public class Part1PasswordPolicyTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                yield return new object[] {(1, 3, 'a'), "abcde", true};
+                yield return new object[] {(1, 3, 'b'), "cdefg", false};
+                yield return new object[] {(2, 9, 'c'), "ccccccccc", true};
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        public class Part2PasswordPolicyTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                yield return new object[] {(1, 3, 'a'), "abcde", true};
+                yield return new object[] {(1, 3, 'b'), "cdefg", false};
+                yield return new object[] {(2, 9, 'c'), "ccccccccc", false};
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        [Theory]
+        [ClassData(typeof(Part1PasswordPolicyTestData))]
+        public void Part1PasswordPolicy_IsValidPassword_SampleData_ExpectedResult((int, int, char) policy, string password, bool expectedResult)
+        {
+            var passwordPolicy = new Part1PasswordPolicy();
+            var result = passwordPolicy.IsValidPassword(password, policy);
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Theory]
+        [ClassData(typeof(Part2PasswordPolicyTestData))]
+        public void Part2PasswordPolicy_IsValidPassword_SampleData_ExpectedResult((int, int, char) policy, string password, bool expectedResult)
+        {
+            var passwordPolicy = new Part2PasswordPolicy();
+            var result = passwordPolicy.IsValidPassword(password, policy);
+            Assert.Equal(expectedResult, result);
+        }
+
         [Theory]
         [ClassData(typeof(PasswordPolicyTextTestData))]
         public void ParsePasswordPolicy_SampleData_ExpectedTuple(string input, (int, int, char) expectedOutput)
@@ -72,7 +114,8 @@ namespace AdventOfCode.Tests
         {
             var outputWriter = Substitute.For<TextWriter>();
             var testComponent = new Day02(outputWriter);
-            var result = testComponent.IsValidPassword(input);
+            var policy = new Part1PasswordPolicy();
+            var result = testComponent.IsValidPassword(input, policy);
 
             Assert.Equal(expectedOutput, result);
         }

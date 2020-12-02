@@ -7,6 +7,13 @@ namespace AdventOfCode.ConsoleApp
 {
     public class Day01
     {
+        private readonly TextWriter Output;
+
+        public Day01(TextWriter output)
+        {
+            Output = output;
+        }
+
         public void Run(string path)
         {
             var data = File.OpenText(path)
@@ -15,9 +22,9 @@ namespace AdventOfCode.ConsoleApp
                 .Select(line => Convert.ToInt32(line))
                 .ToArray();
             var puzzle1 = FindXThatSum(data, 2020, 2).Aggregate((c, n) => c * n);
-            Console.WriteLine($"Answer 1: {puzzle1}");
+            Output.WriteLine($"Answer 1: {puzzle1}");
             var puzzle2 = FindXThatSum(data, 2020, 3).Aggregate((c, n) => c * n);
-            Console.WriteLine($"Answer 2: {puzzle2}");
+            Output.WriteLine($"Answer 2: {puzzle2}");
         }
 
         public int[] FindXThatSum(int[] input, int sum, int count)

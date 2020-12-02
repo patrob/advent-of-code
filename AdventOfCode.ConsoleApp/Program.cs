@@ -10,7 +10,7 @@ namespace AdventOfCode.ConsoleApp
             switch(args.FirstOrDefault())
             {
                 case "1":
-                    new Day01().Run("./Input/day01.txt");
+                    new Day01(Console.Out).Run("./Input/day01.txt");
                     break;
                 case "2":
                     new Day02(Console.Out).Run("./Input/day02.txt");

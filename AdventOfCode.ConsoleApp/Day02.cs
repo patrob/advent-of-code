@@ -5,6 +5,39 @@ using System.Linq;
 
 namespace AdventOfCode.ConsoleApp
 {
+    public interface IPasswordPolicy {
+        bool IsValidPassword(string password, (int, int, char) policy);
+    }
+
+    public abstract class PasswordPolicy : IPasswordPolicy {
+        protected int CountChars(char charToCount, string text)
+        {
+            return text.Count(c => c == charToCount);
+        }
+
+        public virtual bool IsValidPassword(string password, (int, int, char) policy)
+        {
+            throw new NotImplementedException("implement child class");
+        }
+    }
+
+    public class Part1PasswordPolicy : PasswordPolicy {
+        public override bool IsValidPassword(string password, (int, int, char) policy)
+        {
+            var charCount = CountChars(policy.Item3, password);
+            return charCount >= policy.Item1 && charCount <= policy.Item2;
+        }
+    }
+
+    public class Part2PasswordPolicy : PasswordPolicy {
+        public override bool IsValidPassword(string password, (int, int, char) policy)
+        {
+            var charAt1 = password[policy.Item1 - 1];
+            var charAt2 = password[policy.Item2 - 1];
+            return charAt1 == policy.Item3 ^ charAt2 == policy.Item3;
+        }
+    }
+
     public class Day02
     {
         private readonly TextWriter Output;
@@ -17,13 +50,17 @@ namespace AdventOfCode.ConsoleApp
         public void Run(string path)
         {
             var data = File.OpenText(path).ReadToEnd().Split('\n');
-            var result = GetNumberOfValidPasswords(data);
-            Output.WriteLine($"Answer 1: {result}");
+            var part1Policy = new Part1PasswordPolicy();
+            var result1 = GetNumberOfValidPasswords(data, part1Policy);
+            Output.WriteLine($"Answer 1: {result1}");
+            var part2Policy = new Part2PasswordPolicy();
+            var result2 = GetNumberOfValidPasswords(data, part2Policy);
+            Output.WriteLine($"Answer 2: {result2}");
         }
 
-        public int GetNumberOfValidPasswords(IEnumerable<string> records)
+        public int GetNumberOfValidPasswords(IEnumerable<string> records, IPasswordPolicy policy)
         {
-            return records.Count(record => IsValidPassword(record));
+            return records.Count(record => IsValidPassword(record, policy));
         }
 
         public (string, string) GetPolicyAndPassword(string input)
@@ -48,14 +85,14 @@ namespace AdventOfCode.ConsoleApp
             return text.Count(c => c == charToCount);
         }
 
-        public bool IsValidPassword(string input)
+        public bool IsValidPassword(string input, IPasswordPolicy passwordPolicy)
         {
             var policyAndPassword = GetPolicyAndPassword(input);
             var policy = ParsePasswordPolicy(policyAndPassword.Item1);
             var password = policyAndPassword.Item2;
             var charCount = CountChars(policy.Item3, password);
             
-            return charCount >= policy.Item1 && charCount <= policy.Item2;
+            return passwordPolicy.IsValidPassword(password, policy);
         }
     }
 }
