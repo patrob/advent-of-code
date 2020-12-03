@@ -2,23 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AdventOfCode.Api;
 
 namespace AdventOfCode.ConsoleApp
 {
-    public class Day01
+    public class Day01 : DayBase
     {
-        private readonly TextWriter Output;
-
-        public Day01(TextWriter output)
-        {
-            Output = output;
-        }
+        public Day01(TextWriter output) : base(output) {}
 
         public void Run(string path)
         {
-            var data = File.OpenText(path)
-                .ReadToEnd()
-                .Split('\n')
+            var data = InputReader.ReadAllFromFile(path)
                 .Select(line => Convert.ToInt32(line))
                 .ToArray();
             var puzzle1 = FindXThatSum(data, 2020, 2).Aggregate((c, n) => c * n);

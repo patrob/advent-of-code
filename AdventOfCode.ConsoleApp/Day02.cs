@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AdventOfCode.Api;
 
 namespace AdventOfCode.ConsoleApp
 {
@@ -38,18 +39,13 @@ namespace AdventOfCode.ConsoleApp
         }
     }
 
-    public class Day02
+    public class Day02 : DayBase
     {
-        private readonly TextWriter Output;
-
-        public Day02(TextWriter output)
-        {
-            Output = output;
-        }
+        public Day02(TextWriter output) : base(output) {}
 
         public void Run(string path)
         {
-            var data = File.OpenText(path).ReadToEnd().Split('\n');
+            var data = InputReader.ReadAllFromFile(path);
             var part1Policy = new Part1PasswordPolicy();
             var result1 = GetNumberOfValidPasswords(data, part1Policy);
             Output.WriteLine($"Answer 1: {result1}");
