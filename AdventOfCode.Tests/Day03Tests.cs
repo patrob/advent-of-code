@@ -29,18 +29,8 @@ namespace AdventOfCode.Tests
             
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[]
-                {
-                    TestMap,
-                    (TestMap[0].Length, 0),
-                    '.'
-                };
-                yield return new object[]
-                {
-                    TestMap,
-                    (TestMap[0].Length + 3, 0),
-                    '#'
-                };
+                yield return new object[] { (TestMap[0].Length, 0), '.' };
+                yield return new object[] { (TestMap[0].Length + 3, 0), '#' };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -51,18 +41,23 @@ namespace AdventOfCode.Tests
             
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[]
-                {
-                    TestMap,
-                    (0, 0),
-                    true
-                };
-                yield return new object[]
-                {
-                    TestMap,
-                    (0, TestMap.Length),
-                    false
-                };
+                yield return new object[] { (0, 0), true };
+                yield return new object[] { (0, TestMap.Length), false };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        public class MultiplePathsTestData : IEnumerable<object[]>
+        {
+            
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                yield return new object[] { (1, 1), 2 };
+                yield return new object[] { (3, 1), 7 };
+                yield return new object[] { (5, 1), 3 };
+                yield return new object[] { (7, 1), 4 };
+                yield return new object[] { (1, 2), 2 };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -87,32 +82,42 @@ namespace AdventOfCode.Tests
 
         [Theory]
         [ClassData(typeof(MapOverlapTestData))]
-        public void GetCharAtLocation_Overlaps_ExpectedChar(string[] map, (int, int) location, char expectedResult)
+        public void GetCharAtLocation_Overlaps_ExpectedChar((int, int) location, char expectedResult)
         {
             var component = new Day03(MockOutput);
-            var result = component.GetCharAtLocation(map, location);
+            var result = component.GetCharAtLocation(TestMap, location);
 
             Assert.Equal(expectedResult, result);
         }
 
         [Theory]
         [ClassData(typeof(MapWithinBoundsTestData))]
-        public void IsWithinBounds_GivenLocations_ExpectedResult(string[] map, (int, int) location, bool expected)
+        public void IsWithinBounds_GivenLocations_ExpectedResult((int, int) location, bool expected)
         {
             var component = new Day03(MockOutput);
-            var result = component.IsWithinBounds(map, location);
+            var result = component.IsWithinBounds(TestMap, location);
 
             Assert.Equal(expected, result);
         }
 
-        [Fact]
-        public void CountTreesInPath_GivenMapAndDirection_ExpectedResult()
+        [Theory]
+        [ClassData(typeof(MultiplePathsTestData))]
+        public void CountTreesInPath_GivenMapAndDirection_ExpectedResult((int, int) direction, int expectedAmount)
         {
-            const int expectedAmount = 7;
             var componet = new Day03(MockOutput);
-            var result = componet.CountTreesInPath(TestMap, (3,1), (0,0));
+            var result = componet.CountTreesInPath(TestMap, direction, (0,0));
 
             Assert.Equal(expectedAmount, result);
+        }
+
+        [Fact]
+        public void MultiplyTreesInPath_GivenMapAndPaths_ExpectedResult()
+        {
+            const int expected = 336;
+            var paths = new[] { (1, 1), (3, 1), (5, 1), (7, 1), (1, 2) };
+            var component = new Day03(MockOutput);
+            var result = component.MultiplyTreesInPaths(TestMap, paths);
+            Assert.Equal(expected, result);
         }
     }
 }
